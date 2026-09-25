@@ -597,78 +597,52 @@ document.addEventListener("DOMContentLoaded",()=>{
   document.getElementById("shareButton").addEventListener("click",shareResult);
 });
 function selectAnswer(value) {
-
   const q = questions[index];
+  const key = q[1];
 
-  // 回答を保存
+  // すでに回答済みなら、前の点数をいったん取り消してから更新
+  if (answers[index] !== undefined) {
+    scores[key] -= answers[index];
+  }
+
   answers[index] = value;
-  scores[q[1]] += value;
+  scores[key] += value;
 
   // 選択したボタンを表示
   const buttons = document.querySelectorAll(".option");
-
   buttons.forEach((button, i) => {
     button.disabled = true;
-
-    if (i === value) {
-      button.classList.add("selected");
-    }
+    button.classList.toggle("selected", i === value);
   });
 
-  // 少しだけ表示してから次へ
+  // 少しだけ選択状態を見せてから次へ
   setTimeout(() => {
-
     if (index < questions.length - 1) {
-
       index++;
-
       showQuestion();
-
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-      });
-
+      window.scrollTo({top:0, behavior:"smooth"});
     } else {
-
       document.getElementById("bar").style.width = "100%";
-
       showResult();
-
     }
-
   }, 180);
-}  
-  function goBack() {
+}
 
-  if (index <= 0) {
-    return;
-  }
+function goBack() {
+  if (index <= 0) return;
 
-  // 現在の質問の位置を1つ戻す
   index--;
-
-  // 戻った質問の回答を表示
   showQuestion();
 
-  // 前回選択した回答があれば選択状態にする
+  // 以前の回答を選択状態として表示
   if (answers[index] !== undefined) {
-
     const buttons = document.querySelectorAll(".option");
-
     buttons.forEach((button, i) => {
-
-      if (i === answers[index]) {
-        button.classList.add("selected");
-      }
-
+      button.classList.toggle("selected", i === answers[index]);
     });
   }
 
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth"
-  });
+  window.scrollTo({top:0, behavior:"smooth"});
 }
 </script>
 </body>
