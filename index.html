@@ -213,9 +213,18 @@ h1{font-size:29px;line-height:1.4;text-align:center;color:var(--navy);margin:10p
 <div id="quiz" class="hidden">
   <section class="card">
     <div class="progress"><div id="bar" class="bar"></div></div>
-    <div id="counter" class="counter"></div>
-    <div id="question" class="q"></div>
-    <div id="options" class="options"></div>
+      <div id="counter" class="counter"></div>
+      <div id="question" class="q"></div>
+      <div id="options" class="options"></div>
+      <button
+      type="button"
+      id="backButton"
+      class="back-button"
+      onclick="goBack()"
+      style="display:none;"
+    >
+    ← 前の質問に戻る
+    </button>
   </section>
 </div>
 
