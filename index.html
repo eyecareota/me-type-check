@@ -192,6 +192,23 @@ h1{font-size:29px;line-height:1.4;text-align:center;color:var(--navy);margin:10p
 .option.selected .radio-circle {
   border: 6px solid var(--navy);
 }
+  .back-button {
+  display: block;
+  width: 100%;
+  margin: 18px 0 0;
+  padding: 13px;
+  border: none;
+  background: transparent;
+  color: #667085;
+  font-size: 14px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.back-button:active {
+  opacity: 0.6;
+}
 </style>
 </head>
 <body>
@@ -467,6 +484,13 @@ function showQuestion(){
   document.getElementById("counter").textContent=`QUESTION ${index+1} / ${questions.length}`;
   document.getElementById("bar").style.width=((index/questions.length)*100)+"%";
   document.getElementById("question").textContent=q[0];
+  const backButton = document.getElementById("backButton");
+
+if (index === 0) {
+  backButton.style.display = "none";
+} else {
+  backButton.style.display = "block";
+}
 
 const labels = [
   "ほとんどない",
@@ -615,6 +639,37 @@ function selectAnswer(value) {
 
   }, 180);
 }  
+  function goBack() {
+
+  if (index <= 0) {
+    return;
+  }
+
+  // 現在の質問の位置を1つ戻す
+  index--;
+
+  // 戻った質問の回答を表示
+  showQuestion();
+
+  // 前回選択した回答があれば選択状態にする
+  if (answers[index] !== undefined) {
+
+    const buttons = document.querySelectorAll(".option");
+
+    buttons.forEach((button, i) => {
+
+      if (i === answers[index]) {
+        button.classList.add("selected");
+      }
+
+    });
+  }
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+}
 </script>
 </body>
 </html>
