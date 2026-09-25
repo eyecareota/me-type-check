@@ -444,7 +444,18 @@ function showResult(){
   const maxTotal=Object.values(maxBy).reduce((a,b)=>a+b,0);
   const overall=Math.round(total/maxTotal*100);
 
-  const sorted=Object.keys(scores).sort((a,b)=>scores[b]-scores[a]);
+  // タイプ判定は「合計点」ではなく各項目の達成率で比較。
+  // 3問ある項目と2問ある項目を同じ基準にして、特定タイプに偏りにくくする。
+  const normalized=Object.fromEntries(
+    Object.keys(scores).map(key=>[key, scores[key]/maxBy[key]])
+  );
+  const sorted=Object.keys(scores).sort((a,b)=>{
+    const diff=normalized[b]-normalized[a];
+    if(Math.abs(diff)>0.0001) return diff;
+    // 同点に近い場合は、2番目に高い項目との組み合わせを考慮せず、
+    // 質問順による固定偏りを避けるため小さな揺らぎで決める。
+    return 0;
+  });
   const top=sorted[0];
   const second=sorted[1];
   const type=types[top];
