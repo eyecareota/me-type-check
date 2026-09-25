@@ -150,6 +150,48 @@ h1{font-size:29px;line-height:1.4;text-align:center;color:var(--navy);margin:10p
   .q{font-size:18px}
   .share-buttons{grid-template-columns:1fr}
 }
+  /* スマホ用・診断回答ボタン */
+.option {
+  width: 100%;
+  min-height: 58px;
+  padding: 16px 18px;
+  border: 2px solid var(--line);
+  border-radius: 16px;
+  background: #fff;
+  color: var(--ink);
+  text-align: left;
+  font-size: 15px;
+  line-height: 1.5;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.option:active {
+  transform: scale(0.98);
+  background: #f3f0e9;
+}
+
+.option.selected {
+  border-color: var(--navy);
+  background: #f3f6fa;
+}
+
+.radio-circle {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  margin-right: 12px;
+  border: 2px solid #9da4ad;
+  border-radius: 50%;
+  vertical-align: middle;
+}
+
+.option.selected .radio-circle {
+  border: 6px solid var(--navy);
+}
 </style>
 </head>
 <body>
@@ -417,26 +459,23 @@ function showQuestion(){
   document.getElementById("bar").style.width=((index/questions.length)*100)+"%";
   document.getElementById("question").textContent=q[0];
 
-  const labels=["ほとんどない","ときどきある","よくある","かなりある"];
-  document.getElementById("options").innerHTML=labels.map((label,value)=>
-    `<label class="option"><input type="radio" name="answer" value="${value}"> ${label}</label>`
-  ).join("");
+const labels = [
+  "ほとんどない",
+  "ときどきある",
+  "よくある",
+  "かなりある"
+];
 
-  document.querySelectorAll('input[name="answer"]').forEach(input=>{
-    input.addEventListener("change",()=>{
-      answers[index]=Number(input.value);
-      scores[q[1]]+=Number(input.value);
-
-      if(index<questions.length-1){
-        index++;
-        showQuestion();
-        window.scrollTo({top:0,behavior:"smooth"});
-      }else{
-        document.getElementById("bar").style.width="100%";
-        showResult();
-      }
-    });
-  });
+document.getElementById("options").innerHTML = labels.map((label, value) => `
+  <button
+    type="button"
+    class="option"
+    onclick="selectAnswer(${value})"
+  >
+    <span class="radio-circle"></span>
+    <span>${label}</span>
+  </button>
+`).join("");
 }
 
 function showResult(){
@@ -524,6 +563,49 @@ document.addEventListener("DOMContentLoaded",()=>{
   document.getElementById("copyButton").addEventListener("click",copyResult);
   document.getElementById("shareButton").addEventListener("click",shareResult);
 });
+function selectAnswer(value) {
+
+  const q = questions[index];
+
+  // 回答を保存
+  answers[index] = value;
+  scores[q[1]] += value;
+
+  // 選択したボタンを表示
+  const buttons = document.querySelectorAll(".option");
+
+  buttons.forEach((button, i) => {
+    button.disabled = true;
+
+    if (i === value) {
+      button.classList.add("selected");
+    }
+  });
+
+  // 少しだけ表示してから次へ
+  setTimeout(() => {
+
+    if (index < questions.length - 1) {
+
+      index++;
+
+      showQuestion();
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+
+    } else {
+
+      document.getElementById("bar").style.width = "100%";
+
+      showResult();
+
+    }
+
+  }, 180);
+}  
 </script>
 </body>
 </html>
